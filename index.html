@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>仕事とエネルギー 計算問題</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<style>
+:root{--bg:#f4f6f9;--card:#fff;--ink:#1f2937;--sub:#6b7280;--line:#e5e7eb;--pri:#2563eb;--pri2:#dbeafe;--ok:#16a34a;--okbg:#dcfce7;--ng:#dc2626;--ngbg:#fee2e2;--sym:#7c3aed;--num:#0e7490}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,"Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;font-size:17px;line-height:1.7}
+header{position:sticky;top:0;z-index:10;background:#1e3a8a;color:#fff;padding:10px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+header h1{font-size:18px;margin:0;flex:1;min-width:200px}
+.who{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.35);color:#fff;border-radius:999px;padding:6px 14px;font-size:14px;cursor:pointer}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding:10px 12px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:52px;z-index:9}
+.tab{flex:0 0 auto;border:1px solid var(--line);background:#fff;border-radius:10px;padding:10px 14px;font-size:15px;cursor:pointer;color:var(--ink);min-height:44px}
+.tab.on{background:var(--pri);color:#fff;border-color:var(--pri);font-weight:600}
+main{max-width:880px;margin:0 auto;padding:16px 12px 80px}
+.card{background:var(--card);border-radius:14px;box-shadow:0 1px 3px rgba(0,0,0,.08);padding:18px;margin-bottom:16px}
+.btn{border:none;border-radius:12px;padding:14px 22px;font-size:17px;font-weight:600;cursor:pointer;min-height:50px}
+.btn.pri{background:var(--pri);color:#fff}.btn.pri:disabled{background:#93c5fd;cursor:default}
+.btn.sec{background:#eef2f7;color:var(--ink)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+label.f{display:flex;flex-direction:column;font-size:14px;color:var(--sub);gap:4px}
+input,select{font-size:17px;padding:10px 12px;border:1px solid #cbd5e1;border-radius:10px;min-height:46px;background:#fff;color:var(--ink)}
+.modes{display:flex;gap:8px;margin-bottom:14px}
+.mode{flex:1;border:2px solid var(--line);background:#fff;border-radius:12px;padding:12px;font-size:16px;cursor:pointer;min-height:50px}
+.mode.on{border-color:var(--pri);background:var(--pri2);font-weight:700}
+.mem{display:grid;grid-template-columns:52px 110px 1fr;gap:8px;align-items:center;margin-bottom:8px}
+.mem span{color:var(--sub);font-size:14px}
+.msg{padding:10px 14px;border-radius:10px;margin-top:10px;font-size:15px}
+.msg.ng{background:var(--ngbg);color:#991b1b}.msg.ok{background:var(--okbg);color:#166534}.msg.info{background:#eef2ff;color:#3730a3}
+.ph{display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+.pno{font-weight:800;font-size:19px}
+.badge{font-size:12px;padding:2px 10px;border-radius:999px;color:#fff;font-weight:700}
+.badge.文字{background:var(--sym)}.badge.数値{background:var(--num)}
+.ptitle{color:var(--sub);font-size:15px}
+.ptext{margin:4px 0 10px}
+.fig{display:block;max-width:330px;width:100%;margin:6px auto 12px;color:#334155}
+.sub{border-top:1px dashed var(--line);padding-top:12px;margin-top:12px}
+.sq{font-weight:600;margin-bottom:8px}
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:560px){.choices{grid-template-columns:1fr}.mem{grid-template-columns:40px 90px 1fr}}
+.ch{border:2px solid var(--line);background:#fff;border-radius:12px;padding:10px 12px;font-size:17px;cursor:pointer;min-height:56px;display:flex;align-items:center;gap:10px;text-align:left;color:var(--ink)}
+.ch b{flex:0 0 28px;height:28px;border-radius:50%;background:#eef2f7;display:flex;align-items:center;justify-content:center;font-size:14px}
+.ch.ng{border-color:var(--ng);background:var(--ngbg);opacity:.75;cursor:default}
+.ch.ok{border-color:var(--ok);background:var(--okbg);font-weight:700}
+.ch:disabled{cursor:default}
+.fb{margin-top:8px;font-size:15px}
+.fb .res{font-weight:800}.fb .res.ok{color:var(--ok)}.fb .res.ng{color:var(--ng)}
+.exp{background:#f8fafc;border-left:4px solid var(--ok);padding:8px 12px;border-radius:6px;margin-top:6px}
+.progress{font-size:15px;color:var(--sub)}
+.score{font-size:30px;font-weight:800;color:var(--pri)}
+.intro li{margin-bottom:4px}
+</style>
+</head>
+<body>
+<header><h1>仕事とエネルギー 計算問題</h1><button class="who" id="who" onclick="editStudent()"></button></header>
+<nav class="tabs" id="tabs"></nav>
+<main id="app"></main>
+<script>
+// ==== 問題生成 ====
+const g = 9.8;
+const R = String.raw;
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const M = s => '\\(' + s + '\\)';
+const S3 = 1.73;
+
+// 有効数字2桁の表記（教科書の書き方：35，4.9，0.15，2.9×10^2，5.0×10^-2）
+function fmt(x) {
+  if (Math.abs(x) < 1e-9) return '0';
+  const sg = x < 0 ? '-' : '';
+  const a = Math.abs(x);
+  let e = Math.floor(Math.log10(a) + 1e-12);
+  let m = Math.round(a / Math.pow(10, e) * 10 + 1e-9) / 10;
+  if (m >= 10) { m = 1; e++; }
+  if (e >= 2 || e <= -2) return sg + m.toFixed(1) + '\\times10^{' + e + '}';
+  const v = m * Math.pow(10, e);
+  return sg + v.toFixed(Math.max(0, 1 - e));
+}
+// 問題文中の与えられた値
+function V(x) {
+  if (Number.isInteger(x) && Math.abs(x) >= 100) return String(x);
+  const f = fmt(x);
+  return f.includes('times') ? M(f) : f.replace('-', '−');
+}
+const N = (x, u) => M(fmt(x) + (u ? '\\ \\mathrm{' + u + '}' : ''));
+
+function mk(q, ans, ds, exp) {
+  const all = shuffle([ans, ...ds]);
+  return { q, ch: all, a: all.indexOf(ans), exp };
+}
+// 数値の小問：答えと誤答候補から重複しない4択をつくる
+function numSub(q, ans, unit, cands, exp) {
+  const used = new Set([fmt(ans)]), ds = [];
+  const pool = cands.concat([2, 0.5, 1.5, 3, 0.25, 4, 10, 0.1, -1].map(k => ans * k), [1, 2, 5, 10]);
+  for (const c of pool) {
+    if (!isFinite(c)) continue;
+    const k = fmt(c);
+    if (used.has(k)) continue;
+    used.add(k); ds.push(c);
+    if (ds.length === 3) break;
+  }
+  return mk(q, N(ans, unit), ds.map(d => N(d, unit)), exp);
+}
+const symSub = (q, ans, ds, exp) => mk(q, M(ans), ds.map(M), exp);
+
+// ==== 図 ====
+function arr(x1, y1, x2, y2, w = 2) {
+  const a = Math.atan2(y2 - y1, x2 - x1), L = 10;
+  const p = t => `${(x2 - L * Math.cos(a + t)).toFixed(1)},${(y2 - L * Math.sin(a + t)).toFixed(1)}`;
+  return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="currentColor" stroke-width="${w}"/><polygon points="${x2},${y2} ${p(0.4)} ${p(-0.4)}" fill="currentColor"/>`;
+}
+const svg = (h, body) => `<svg class="fig" viewBox="0 0 320 ${h}" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" font-size="14">${body}</svg>`;
+const tx = (x, y, s, anc = 'middle') => `<text x="${x}" y="${y}" fill="currentColor" stroke="none" text-anchor="${anc}">${s}</text>`;
+const ground = (y, x1 = 15, x2 = 305) => `<line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}"/>` + Array.from({ length: Math.floor((x2 - x1) / 14) }, (_, i) => `<line x1="${x1 + 8 + i * 14}" y1="${y}" x2="${x1 + i * 14}" y2="${y + 8}" stroke-width="1"/>`).join('');
+function zig(x1, y1, x2, y2, n = 8, amp = 8) {
+  const dx = (x2 - x1) / (n * 2), dy = (y2 - y1) / (n * 2), L = Math.hypot(x2 - x1, y2 - y1), nx = -(y2 - y1) / L, ny = (x2 - x1) / L;
+  let d = `M${x1},${y1}`;
+  for (let i = 1; i < n * 2; i++) { const s = (i % 2 ? 1 : -1) * amp; d += ` L${(x1 + dx * i + nx * s).toFixed(1)},${(y1 + dy * i + ny * s).toFixed(1)}`; }
+  return `<path d="${d} L${x2},${y2}"/>`;
+}
+function figForceAngle(lbl) {
+  const t = 30 * Math.PI / 180, cx = 150, cy = 100;
+  return svg(150, ground(125) + `<rect x="115" y="80" width="70" height="45"/>` +
+    arr(cx, cy, cx + 105 * Math.cos(t), cy - 105 * Math.sin(t), 3) +
+    `<line x1="${cx}" y1="${cy}" x2="270" y2="${cy}" stroke-dasharray="5 4" stroke-width="1.5"/>` +
+    `<path d="M${cx + 45},${cy} A45,45 0 0 0 ${(cx + 45 * Math.cos(t)).toFixed(1)},${(cy - 45 * Math.sin(t)).toFixed(1)}" stroke-width="1.5"/>` +
+    tx(cx + 62, cy - 10, lbl) + tx(cx + 112, cy - 58, 'F'));
+}
+function figIncline(lbl, arrow = '') {
+  const t = Math.PI / 6, x0 = 30, y0 = 150, bl = 250, h = bl * Math.tan(t);
+  const cx = x0 + bl * 0.5, cy = y0 - bl * 0.5 * Math.tan(t);
+  let a = '';
+  if (arrow) {
+    const ux = Math.cos(t), uy = -Math.sin(t), sx = cx + ux * 22 - uy * 0, sy = cy + uy * 22;
+    a = arr(sx + 14 * Math.sin(t), sy - 14 * Math.cos(t), sx + ux * 60 + 14 * Math.sin(t), sy + uy * 60 - 14 * Math.cos(t), 3) + tx(sx + ux * 60 + 10, sy + uy * 60 - 30, arrow);
+  }
+  return svg(170, `<polygon points="${x0},${y0} ${x0 + bl},${y0} ${x0 + bl},${(y0 - h).toFixed(1)}"/>` +
+    `<g transform="translate(${cx.toFixed(1)},${cy.toFixed(1)}) rotate(-30)"><rect x="-22" y="-30" width="44" height="30"/></g>` +
+    `<path d="M${x0 + 50},${y0} A50,50 0 0 0 ${(x0 + 50 * Math.cos(t)).toFixed(1)},${(y0 - 50 * Math.sin(t)).toFixed(1)}" stroke-width="1.5"/>` + tx(x0 + 66, y0 - 8, lbl) + a);
+}
+function figPulley() {
+  return svg(185, `<line x1="60" y1="10" x2="280" y2="10" stroke-width="3"/>` +
+    `<line x1="220" y1="10" x2="220" y2="45"/><circle cx="220" cy="45" r="16"/>` +
+    `<line x1="134" y1="10" x2="134" y2="115"/><circle cx="150" cy="115" r="16"/>` +
+    `<line x1="166" y1="115" x2="204" y2="45"/><line x1="236" y1="45" x2="236" y2="125"/>` + arr(236, 125, 236, 160, 3) + tx(262, 150, '引く') +
+    `<line x1="150" y1="131" x2="150" y2="145"/><rect x="125" y="145" width="50" height="30"/>` + tx(150, 166, '物体'));
+}
+function figAtwood() {
+  return svg(170, `<line x1="100" y1="10" x2="220" y2="10" stroke-width="3"/><line x1="160" y1="10" x2="160" y2="40"/><circle cx="160" cy="40" r="18"/>` +
+    `<line x1="142" y1="40" x2="142" y2="105"/><line x1="178" y1="40" x2="178" y2="105"/>` +
+    `<rect x="120" y="105" width="44" height="40"/><rect x="164" y="105" width="38" height="34"/>` + tx(142, 131, 'A') + tx(183, 127, 'B'));
+}
+function figSpringH() {
+  return svg(140, ground(120, 30, 305) + `<line x1="30" y1="40" x2="30" y2="120" stroke-width="3"/>` +
+    Array.from({ length: 6 }, (_, i) => `<line x1="30" y1="${48 + i * 13}" x2="20" y2="${56 + i * 13}" stroke-width="1"/>`).join('') +
+    zig(30, 98, 150, 98) + `<rect x="210" y="76" width="50" height="44"/>` + arr(205, 60, 160, 60, 3) + tx(183, 52, 'v₀'));
+}
+function figSpringV() {
+  return svg(160, `<line x1="100" y1="10" x2="220" y2="10" stroke-width="3"/>` + zig(160, 10, 160, 85, 7, 9) +
+    `<rect x="135" y="85" width="50" height="36"/><rect x="105" y="121" width="110" height="7"/>` + tx(160, 108, 'm') + arr(250, 60, 250, 120, 1.5) + tx(262, 95, 'x', 'start'));
+}
+function figPendulum(lbl, nail = false) {
+  const t = Math.PI / 3, L = 110, px = 160, py = 15, bx = px + L * Math.sin(t), by = py + L * Math.cos(t);
+  return svg(150, `<line x1="110" y1="${py}" x2="210" y2="${py}" stroke-width="3"/>` +
+    `<line x1="${px}" y1="${py}" x2="${px}" y2="${py + L}" stroke-dasharray="5 4" stroke-width="1.5"/>` +
+    `<line x1="${px}" y1="${py}" x2="${bx.toFixed(1)}" y2="${by.toFixed(1)}"/><circle cx="${bx.toFixed(1)}" cy="${by.toFixed(1)}" r="8" fill="currentColor"/>` +
+    `<circle cx="${px}" cy="${py + L}" r="8" stroke-dasharray="3 3" stroke-width="1.5"/>` +
+    `<path d="M${px},${py + 35} A35,35 0 0 0 ${(px + 35 * Math.sin(t)).toFixed(1)},${(py + 35 * Math.cos(t)).toFixed(1)}" stroke-width="1.5"/>` + tx(px + 22, py + 50, lbl) + tx(px - 10, py + 4, 'O', 'end'));
+}
+function figLevels() {
+  return svg(170, `<path d="M15,150 L120,150 L120,110 L210,110 L210,40 L305,40"/>` +
+    `<path d="M20,158 q8,-5 16,0 t16,0 t16,0 t16,0 t16,0" stroke-width="1.2"/>` +
+    `<rect x="150" y="92" width="30" height="18"/>` + tx(65, 140, '川の水面') + tx(165, 128, '道路') + tx(258, 32, '庭') +
+    arr(100, 130, 100, 110, 1.2) + arr(100, 130, 100, 150, 1.2) + tx(95, 134, 'a', 'end') +
+    arr(232, 75, 232, 40, 1.2) + arr(232, 75, 232, 110, 1.2) + tx(240, 80, 'b', 'start'));
+}
+function figLoop() {
+  return svg(170, ground(150) + `<circle cx="130" cy="105" r="45"/><path d="M215,150 L300,60"/>` +
+    `<circle cx="40" cy="142" r="7" fill="currentColor"/>` + arr(52, 128, 85, 128, 2) + tx(40, 126, 'A') +
+    `<circle cx="130" cy="60" r="4" fill="currentColor"/>` + tx(130, 52, 'B') + tx(282, 70, 'C') +
+    `<line x1="130" y1="60" x2="130" y2="150" stroke-dasharray="4 4" stroke-width="1"/>` + tx(118, 110, 'd', 'end'));
+}
+function figCurve() {
+  return svg(175, ground(160) + `<path d="M25,30 C60,150 130,160 170,140 S230,100 240,95"/>` +
+    `<circle cx="28" cy="38" r="6" fill="currentColor"/>` + tx(40, 30, 'A', 'start') + tx(250, 92, 'B', 'start') +
+    arr(240, 95, 290, 45, 2) + tx(278, 40, '45°', 'start') +
+    `<line x1="12" y1="38" x2="12" y2="160" stroke-width="1"/>` + tx(18, 100, 'h₁', 'start') +
+    `<line x1="240" y1="95" x2="240" y2="160" stroke-dasharray="4 4" stroke-width="1"/>` + tx(246, 135, 'h₂', 'start'));
+}
+function figStrip() {
+  return svg(160, `<path d="M20,30 C30,110 60,140 100,140 L220,140 C260,140 290,110 300,30"/>` +
+    `<line x1="125" y1="140" x2="195" y2="140" stroke-width="7" stroke-opacity="0.35"/>` + tx(160, 158, '粗い部分 L') +
+    `<circle cx="24" cy="40" r="6" fill="currentColor"/>` + tx(36, 36, 'h', 'start'));
+}
+function figThrow(lbl = '') {
+  return svg(160, ground(150) + `<path d="M15,50 L120,50 L120,150"/><circle cx="120" cy="44" r="6" fill="currentColor"/>` +
+    arr(128, 44, 175, 44, 2) + tx(185, 40, lbl || 'v₀', 'start') +
+    `<line x1="135" y1="50" x2="135" y2="150" stroke-dasharray="4 4" stroke-width="1"/>` + tx(142, 105, 'H', 'start'));
+}
+
+// ==== ① 仕事と仕事の原理 ====
+function u1n_angle() {
+  const F = pick([10, 20, 30, 40, 50]), s = pick([2.0, 3.0, 4.0, 5.0]), th = pick([30, 60]);
+  const c = th === 30 ? S3 / 2 : 0.5, sn = th === 30 ? 0.5 : S3 / 2, W = F * s * c;
+  return { kind: '数値', title: '斜め向きの力がする仕事', fig: figForceAngle(th + '°'),
+    text: `水平面上にある物体に，水平とのなす角が${th}°の向きに${V(F)} Nの力を加え続け，物体を水平に${V(s)} m動かした。物体はもち上がらなかったとし，\\(\\sqrt{3}=1.73\\)とする。`,
+    subs: [
+      numSub('この力がした仕事はいくらか。', W, 'J', [F * s, F * s * sn, F * s * c * 2],
+        R`移動の向きと力のなす角が${th}°なので，\(W=Fs\cos${th}^\circ=${V(F)}\times${V(s)}\times${th === 30 ? R`\frac{1.73}{2}` : R`\frac{1}{2}`}=${fmt(W)}\ \mathrm{J}\)。移動の向きの力の成分だけが仕事をする。`),
+      mk('物体が水平面から受ける垂直抗力がした仕事はいくらか。', N(0, 'J'), [N(F * s * sn, 'J'), N(-F * s * sn, 'J'), N(F * s, 'J')],
+        '垂直抗力は移動の向きと垂直（なす角90°）なので，\\(W=Fs\\cos90^\\circ=0\\)。仕事をしない。')
+    ] };
+}
+function u1n_pulley() {
+  const m = pick([10, 20, 30, 40, 50]), h = pick([0.50, 1.0, 1.5, 2.0]), T = m * g / 2;
+  return { kind: '数値', title: '動滑車と仕事の原理', fig: figPulley(),
+    text: `図のように，定滑車と動滑車を組みあわせて，質量${V(m)} kgの物体をゆっくりと${V(h)} mの高さまで引き上げた。重力加速度の大きさを9.8 m/s²とし，滑車やひもの質量は無視できるとする。`,
+    subs: [
+      numSub('ひもを引く力の大きさはいくらか。', T, 'N', [m * g, m * g / 4, m / 2],
+        R`動滑車と物体を一体とみると，上向きに張力 \(T\) が2本はたらくので \(2T=${V(m)}\times9.8\)，\(T=${fmt(T)}\ \mathrm{N}\)。`),
+      numSub('人がひもを引いた長さはいくらか。', 2 * h, 'm', [h, h / 2, 4 * h],
+        R`物体を ${V(h)} m 上げるには，動滑車の両側のひもをそれぞれ ${V(h)} m ずつ短くする必要があるので，\(2\times${V(h)}=${fmt(2 * h)}\ \mathrm{m}\)。`),
+      numSub('ひもを引く力がした仕事はいくらか。', m * g * h, 'J', [m * g * h / 2, 2 * m * g * h, m * h],
+        R`\(W=Fs=${fmt(T)}\times${fmt(2 * h)}=${fmt(m * g * h)}\ \mathrm{J}\)。直接もち上げる仕事 \(mgh\) と同じになる（仕事の原理）。`)
+    ] };
+}
+function u1n_lift() {
+  const m = pick([5.0, 10, 20, 25, 50]), h = pick([2.0, 3.0, 4.0, 5.0, 10]), W = m * g * h;
+  return { kind: '数値', title: '一定の速さでもち上げる仕事',
+    text: `質量${V(m)} kgの物体を，鉛直上向きに一定の速さで${V(h)} mもち上げる。重力加速度の大きさを9.8 m/s²とする。`,
+    subs: [
+      numSub('もち上げるのに必要な力の大きさはいくらか。', m * g, 'N', [m, m * g / 2, 2 * m * g],
+        R`一定の速さなので力はつりあっている。\(F=mg=${V(m)}\times9.8=${fmt(m * g)}\ \mathrm{N}\)。`),
+      numSub('もち上げる力がした仕事はいくらか。', W, 'J', [m * h, W / 2, -W],
+        R`\(W=Fs=${fmt(m * g)}\times${V(h)}=${fmt(W)}\ \mathrm{J}\)。`),
+      numSub('この間に重力が物体にした仕事はいくらか。', -W, 'J', [W, -m * h, -W / 2],
+        R`重力（下向き）と移動の向き（上向き）のなす角は180°なので，\(W=mgh\cos180^\circ=-${fmt(W)}\ \mathrm{J}\)。負の仕事になる。`)
+    ] };
+}
+function u1n_friction() {
+  const m = pick([2.0, 4.0, 5.0, 10]), mu = pick([0.20, 0.25, 0.50]), s = pick([2.0, 3.0, 4.0, 5.0]), F = mu * m * g;
+  return { kind: '数値', title: '動摩擦力に逆らってする仕事',
+    text: `粗い水平面上で，質量${V(m)} kgの物体に水平方向の力を加え，一定の速さで${V(s)} m動かした。物体と面との間の動摩擦係数を${V(mu)}，重力加速度の大きさを9.8 m/s²とする。`,
+    subs: [
+      numSub('加えた力の大きさはいくらか。', F, 'N', [m * g, mu * m, 2 * F],
+        R`一定の速さなので加えた力と動摩擦力がつりあう。\(F=\mu' mg=${V(mu)}\times${V(m)}\times9.8=${fmt(F)}\ \mathrm{N}\)。`),
+      numSub('加えた力がした仕事はいくらか。', F * s, 'J', [m * g * s, mu * m * s, -F * s],
+        R`\(W=Fs=${fmt(F)}\times${V(s)}=${fmt(F * s)}\ \mathrm{J}\)。`),
+      numSub('動摩擦力がした仕事はいくらか。', -F * s, 'J', [F * s, -m * g * s, -F * s / 2],
+        R`動摩擦力は運動の向きと逆向きなので負の仕事。\(W=-${fmt(F)}\times${V(s)}=${fmt(-F * s)}\ \mathrm{J}\)。`)
+    ] };
+}
+function u1n_incline() {
+  const m = pick([2.0, 5.0, 10, 20]), L = pick([2.0, 3.0, 4.0, 6.0]), F = m * g / 2, W = F * L;
+  return { kind: '数値', title: '斜面と仕事の原理', fig: figIncline('30°'),
+    text: `水平とのなす角が30°のなめらかな斜面上で，質量${V(m)} kgの物体を斜面に沿ってゆっくりと${V(L)} m引き上げた。重力加速度の大きさを9.8 m/s²，\\(\\sqrt{3}=1.73\\)とする。`,
+    subs: [
+      numSub('斜面に沿って引く力の大きさはいくらか。', F, 'N', [m * g, m * g * S3 / 2, m / 2],
+        R`斜面方向のつりあいから \(F=mg\sin30^\circ=${V(m)}\times9.8\times\frac{1}{2}=${fmt(F)}\ \mathrm{N}\)。`),
+      numSub('引く力がした仕事はいくらか。', W, 'J', [m * g * L, m * g * L * S3 / 2, m * L / 2],
+        R`\(W=FL=${fmt(F)}\times${V(L)}=${fmt(W)}\ \mathrm{J}\)。`),
+      numSub('同じ物体を，同じ高さまで鉛直にゆっくりもち上げるときの仕事はいくらか。', W, 'J', [m * g * L, W / 2, m * g * L * S3 / 2],
+        R`上がる高さは \(${V(L)}\sin30^\circ=${fmt(L / 2)}\ \mathrm{m}\) なので \(mgh=${V(m)}\times9.8\times${fmt(L / 2)}=${fmt(W)}\ \mathrm{J}\)。斜面を使っても仕事は変わらない（仕事の原理）。`)
+    ] };
+}
+function u1s_friction() {
+  return { kind: '文字', title: '動摩擦力がはたらくときの仕事',
+    text: R`粗い水平面上で，質量 \(m\) の物体に水平方向に大きさ \(F\) の力を加え続け，距離 \(x\) だけ動かした。物体と面との間の動摩擦係数を \(\mu'\)，重力加速度の大きさを \(g\) とする。`,
+    subs: [
+      symSub('動摩擦力がした仕事はいくらか。', R`-\mu' mgx`, [R`\mu' mgx`, R`-\mu' mx`, R`-\mu' Fx`],
+        R`動摩擦力の大きさは \(\mu' N=\mu' mg\)。運動と逆向きなので \(W=-\mu' mgx\)。`),
+      symSub('物体がされた仕事の和はいくらか。', R`(F-\mu' mg)x`, [R`(F+\mu' mg)x`, R`Fx`, R`(F-\mu' m)x`],
+        R`各力の仕事の和：\(Fx+(-\mu' mgx)+0+0=(F-\mu' mg)x\)（重力と垂直抗力は仕事をしない）。`),
+      symSub('垂直抗力がした仕事はいくらか。', '0', [R`mgx`, R`-mgx`, R`\mu' mgx`],
+        '垂直抗力は移動の向きと垂直なので仕事をしない。')
+    ] };
+}
+function u1s_angle() {
+  return { kind: '文字', title: '斜め向きの力がする仕事', fig: figForceAngle('θ'),
+    text: R`なめらかな水平面上にある質量 \(m\) の物体に，水平とのなす角 \(\theta\) の向きに大きさ \(F\) の力を加え続け，水平に距離 \(x\) だけ動かした。物体は面からはなれなかったとし，重力加速度の大きさを \(g\) とする。`,
+    subs: [
+      symSub('力 \\(F\\) がした仕事はいくらか。', R`Fx\cos\theta`, [R`Fx\sin\theta`, R`Fx`, R`\dfrac{Fx}{\cos\theta}`],
+        R`移動の向きの成分 \(F\cos\theta\) だけが仕事をする。\(W=Fx\cos\theta\)。`),
+      symSub('重力がした仕事はいくらか。', '0', [R`mgx`, R`-mgx`, R`-Fx\sin\theta`],
+        '重力は鉛直下向きで移動の向き（水平）と垂直なので，仕事は0。'),
+      symSub('物体の速さが \\(0\\) から \\(v\\) になったとすると，\\(v\\) はいくらか。', R`\sqrt{\dfrac{2Fx\cos\theta}{m}}`, [R`\sqrt{\dfrac{2Fx}{m}}`, R`\sqrt{\dfrac{Fx\cos\theta}{m}}`, R`\dfrac{2Fx\cos\theta}{m}`],
+        R`物体がされた仕事は \(Fx\cos\theta\) だけなので，\(\frac12mv^2=Fx\cos\theta\) より \(v=\sqrt{\frac{2Fx\cos\theta}{m}}\)。`)
+    ] };
+}
+function u1s_incline() {
+  return { kind: '文字', title: '斜面に沿って引き上げる仕事', fig: figIncline('θ'),
+    text: R`水平とのなす角が \(\theta\) のなめらかな斜面上で，質量 \(m\) の物体を斜面に沿ってゆっくりと距離 \(L\) だけ引き上げた。重力加速度の大きさを \(g\) とする。`,
+    subs: [
+      symSub('斜面に沿って引く力の大きさはいくらか。', R`mg\sin\theta`, [R`mg\cos\theta`, R`mg`, R`mg\tan\theta`],
+        R`重力の斜面方向の成分 \(mg\sin\theta\) とつりあう。`),
+      symSub('引く力がした仕事はいくらか。', R`mgL\sin\theta`, [R`mgL\cos\theta`, R`mgL`, R`\dfrac{mgL}{\sin\theta}`],
+        R`\(W=mg\sin\theta\times L\)。高さ \(L\sin\theta\) まで直接もち上げる仕事 \(mgh\) と等しい（仕事の原理）。`),
+      symSub('重力がした仕事はいくらか。', R`-mgL\sin\theta`, [R`mgL\sin\theta`, R`-mgL\cos\theta`, '0'],
+        R`物体は高さ \(L\sin\theta\) 上がったので，重力の仕事は \(-mgL\sin\theta\)。`)
+    ] };
+}
+function u1s_pulley() {
+  return { kind: '文字', title: '動滑車と仕事の原理', fig: figPulley(),
+    text: R`図のように，定滑車と動滑車を組みあわせて，質量 \(M\) の物体をゆっくりと高さ \(h\) だけ引き上げた。重力加速度の大きさを \(g\) とし，滑車やひもの質量は無視できる。`,
+    subs: [
+      symSub('ひもを引く力の大きさはいくらか。', R`\dfrac{Mg}{2}`, [R`Mg`, R`2Mg`, R`\dfrac{Mg}{4}`], R`動滑車の両側の張力 \(T\) で支えるので \(2T=Mg\)，\(T=\frac{Mg}{2}\)。`),
+      symSub('人がひもを引いた長さはいくらか。', R`2h`, [R`h`, R`\dfrac{h}{2}`, R`4h`], '動滑車の両側のひもを \\(h\\) ずつ短くするので，\\(2h\\)。'),
+      symSub('ひもを引く力がした仕事はいくらか。', R`Mgh`, [R`\dfrac{Mgh}{2}`, R`2Mgh`, R`\dfrac{Mgh}{4}`], R`\(W=\frac{Mg}{2}\times2h=Mgh\)。力は半分でも距離が2倍になり，仕事は変わらない（仕事の原理）。`)
+    ] };
+}
+
+// ==== ② 仕事率 ====
+function u2n_friction() {
+  const m = pick([10, 20, 40, 50]), mu = pick([0.20, 0.25, 0.50]), s = pick([2.0, 4.0, 5.0, 6.0]), t = pick([4.0, 5.0, 10, 20]);
+  const F = mu * m * g, W = F * s, P = W / t;
+  return { kind: '数値', title: '動摩擦力と仕事率',
+    text: `質量${V(m)} kgの物体に水平方向の力を加えて，水平な台の上を力の向きに一定の速さで${V(t)} sの間に${V(s)} m動かした。物体と台との間の動摩擦係数は${V(mu)}，重力加速度の大きさを9.8 m/s²とする。`,
+    subs: [
+      numSub('加えた力がした仕事はいくらか。', W, 'J', [m * g * s, mu * m * s, W / t],
+        R`一定の速さなので加えた力は動摩擦力とつりあい，\(F=\mu' mg=${fmt(F)}\ \mathrm{N}\)。\(W=Fs=${fmt(F)}\times${V(s)}=${fmt(W)}\ \mathrm{J}\)。`),
+      numSub('加えた力がした仕事の仕事率はいくらか。', P, 'W', [W * t, mu * m * s / t, m * g * s / t],
+        R`\(P=\frac{W}{t}=\frac{${fmt(W)}}{${V(t)}}=${fmt(P)}\ \mathrm{W}\)。`)
+    ] };
+}
+function u2n_Fv() {
+  const f = pick([2.0, 4.0, 5.0, 8.0, 10]), v = pick([2.0, 4.0, 5.0, 10]), v2 = pick([3.0, 6.0, 8.0, 12, 15].filter(x => x !== v)), P2 = f * v2;
+  return { kind: '数値', title: '速さと仕事率',
+    text: `粗い水平面上で，物体に水平方向の力を加えて一定の速さ${V(v)} m/sで引いた。物体が受ける動摩擦力の大きさは${V(f)} Nであった。`,
+    subs: [
+      numSub('物体に加えた力の大きさはいくらか。', f, 'N', [2 * f, f / 2, f * v], R`一定の速さなので，加えた力は動摩擦力とつりあう。\(F=${V(f)}\ \mathrm{N}\)。`),
+      numSub('加えた力がする仕事の仕事率はいくらか。', f * v, 'W', [f / v, v / f, f * v / 2], R`\(P=Fv=${V(f)}\times${V(v)}=${fmt(f * v)}\ \mathrm{W}\)。`),
+      numSub(`別の一定の速さで動かしたところ，同じ大きさの力がする仕事の仕事率が${V(P2)} Wであった。このときの速さはいくらか。`, v2, 'm/s', [P2 / v, P2 * f, v2 / 2],
+        R`\(P=Fv\) より \(v=\frac{P}{F}=\frac{${V(P2)}}{${V(f)}}=${fmt(v2)}\ \mathrm{m/s}\)。`)
+    ] };
+}
+function u2n_crane() {
+  const m = pick([50, 100, 200, 500]), h = pick([5.0, 10, 20]), t = pick([5.0, 10, 20, 25, 50]), W = m * g * h;
+  return { kind: '数値', title: 'もち上げる仕事率',
+    text: `モーターを使って，質量${V(m)} kgの荷物を一定の速さで${V(h)} mの高さまで${V(t)} sかけて引き上げた。重力加速度の大きさを9.8 m/s²とする。`,
+    subs: [
+      numSub('モーターが荷物にした仕事はいくらか。', W, 'J', [m * h, W / 2, W * t], R`\(W=mgh=${V(m)}\times9.8\times${V(h)}=${fmt(W)}\ \mathrm{J}\)。`),
+      numSub('モーターの仕事率はいくらか。', W / t, 'W', [W * t, m * h / t, W / t / g], R`\(P=\frac{W}{t}=\frac{${fmt(W)}}{${V(t)}}=${fmt(W / t)}\ \mathrm{W}\)。`),
+      numSub('荷物の速さを使って仕事率を求めるとき，荷物の速さはいくらか。', h / t, 'm/s', [t / h, h * t, 2 * h / t],
+        R`\(v=\frac{${V(h)}}{${V(t)}}=${fmt(h / t)}\ \mathrm{m/s}\)。\(P=Fv=mg\times v=${fmt(m * g)}\times${fmt(h / t)}=${fmt(W / t)}\ \mathrm{W}\) となり一致する。`)
+    ] };
+}
+function u2n_car() {
+  const P = pick([10, 20, 30, 40, 60]), vk = pick([36, 54, 72, 90, 108]), v = vk / 3.6, F = P * 1000 / v;
+  return { kind: '数値', title: '自動車の仕事率',
+    text: `自動車が水平な道路を一定の速さ${vk} km/hで走っている。このとき，エンジンの仕事率は${P} kWである。`,
+    subs: [
+      numSub('自動車の速さは何m/sか。', v, 'm/s', [vk * 3.6, vk / 60, vk / 10], R`\(${vk}\ \mathrm{km/h}=\frac{${vk}\times1000\ \mathrm{m}}{3600\ \mathrm{s}}=${fmt(v)}\ \mathrm{m/s}\)。`),
+      numSub('自動車が進む向きに受けている力（駆動力）の大きさはいくらか。', F, 'N', [P * 1000 / vk, P / v, P * 1000 * v],
+        R`\(P=Fv\) より \(F=\frac{P}{v}=\frac{${P}\times10^{3}}{${fmt(v)}}=${fmt(F)}\ \mathrm{N}\)。kWをWに，km/hをm/sに直すことに注意。`),
+      numSub('一定の速さで走っているとき，自動車が受けている抵抗力の大きさはいくらか。', F, 'N', [0, F / 2, 2 * F],
+        '一定の速さなので，駆動力と抵抗力はつりあっている。大きさは駆動力と等しい。')
+    ] };
+}
+function u2n_time() {
+  const P = pick([100, 200, 250, 500]), m = pick([10, 20, 50]), h = pick([5.0, 10, 20]), W = m * g * h, t = W / P;
+  return { kind: '数値', title: '仕事率と時間',
+    text: `仕事率${P} Wのモーターで，質量${V(m)} kgの物体を一定の速さで${V(h)} mの高さまで引き上げる。重力加速度の大きさを9.8 m/s²とする。`,
+    subs: [
+      numSub('モーターがする仕事はいくらか。', W, 'J', [m * h, W / 2, P * h], R`\(W=mgh=${V(m)}\times9.8\times${V(h)}=${fmt(W)}\ \mathrm{J}\)。`),
+      numSub('引き上げるのにかかる時間はいくらか。', t, 's', [P / W, W * P, m * h / P], R`\(P=\frac{W}{t}\) より \(t=\frac{W}{P}=\frac{${fmt(W)}}{${P}}=${fmt(t)}\ \mathrm{s}\)。`)
+    ] };
+}
+function u2s_incline() {
+  return { kind: '文字', title: '斜面で引き上げる仕事率', fig: figIncline('θ', 'v'),
+    text: R`水平とのなす角が \(\theta\) の斜面上で，質量 \(m\) の物体に斜面に沿って上向きの力を加え，一定の速さ \(v\) で引き上げる。重力加速度の大きさを \(g\) とする。`,
+    subs: [
+      symSub('斜面がなめらかなとき，力がする仕事の仕事率はいくらか。', R`mgv\sin\theta`, [R`mgv\cos\theta`, R`mgv`, R`\dfrac{mgv}{\sin\theta}`],
+        R`つりあいから \(F=mg\sin\theta\)。\(P=Fv=mgv\sin\theta\)。`),
+      symSub('物体と斜面との間の動摩擦係数が \\(\\mu\'\\) のとき，力がする仕事の仕事率はいくらか。', R`mgv(\sin\theta+\mu'\cos\theta)`, [R`mgv(\sin\theta-\mu'\cos\theta)`, R`mgv(\cos\theta+\mu'\sin\theta)`, R`mgv(\sin\theta+\mu')`],
+        R`垂直抗力 \(N=mg\cos\theta\)，動摩擦力 \(\mu' mg\cos\theta\)（斜面下向き）。\(F=mg\sin\theta+\mu' mg\cos\theta\)，\(P=Fv\)。`)
+    ] };
+}
+function u2s_lift() {
+  return { kind: '文字', title: '一定の速さでもち上げる仕事率',
+    text: R`質量 \(m\) の物体を，鉛直上向きに一定の速さで，時間 \(t\) かけて高さ \(h\) だけもち上げた。重力加速度の大きさを \(g\) とする。`,
+    subs: [
+      symSub('もち上げる力がした仕事の仕事率はいくらか。', R`\dfrac{mgh}{t}`, [R`mght`, R`\dfrac{mh}{t}`, R`\dfrac{mgt}{h}`], R`\(W=mgh\)，\(P=\frac{W}{t}=\frac{mgh}{t}\)。`),
+      symSub('物体の速さを \\(v\\) とするとき，仕事率を \\(v\\) を用いて表すとどうなるか。', R`mgv`, [R`\dfrac{mg}{v}`, R`mv`, R`\dfrac12mv^2`], R`\(v=\frac{h}{t}\) なので \(P=\frac{mgh}{t}=mgv\)。\(P=Fv\) の形。`),
+      symSub('同じ物体を2倍の速さでもち上げると，仕事率は何倍になるか。', R`2\ \text{倍}`, [R`1\ \text{倍}`, R`4\ \text{倍}`, R`\dfrac12\ \text{倍}`], R`力 \(mg\) は同じで \(P=Fv\) なので2倍。（仕事 \(mgh\) は同じだが時間が半分）`)
+    ] };
+}
+function u2s_friction() {
+  return { kind: '文字', title: '水平面上で引く仕事率',
+    text: R`粗い水平面上で，質量 \(m\) の物体に水平方向の力を加え，一定の速さ \(v\) で動かした。物体と面との間の動摩擦係数を \(\mu'\)，重力加速度の大きさを \(g\) とする。`,
+    subs: [
+      symSub('加えた力の大きさはいくらか。', R`\mu' mg`, [R`mg`, R`\mu' m`, R`\dfrac{mg}{\mu'}`], R`一定の速さなので動摩擦力 \(\mu' mg\) とつりあう。`),
+      symSub('加えた力がする仕事の仕事率はいくらか。', R`\mu' mgv`, [R`\dfrac{\mu' mg}{v}`, R`\mu' mv`, R`mgv`], R`\(P=Fv=\mu' mgv\)。`),
+      symSub('時間 \\(t\\) の間に加えた力がした仕事はいくらか。', R`\mu' mgvt`, [R`\dfrac{\mu' mgv}{t}`, R`\mu' mgt`, R`\mu' mgvt^2`], R`\(W=Pt=\mu' mgvt\)（\(=F\times vt\)）。`)
+    ] };
+}
+
+// ==== ③ エネルギーの原理 ====
+function u3n_car() {
+  const m = pick([800, 1000, 1200, 1500]), vk = pick([36, 54, 72]), v = vk / 3.6, s = pick([10, 15, 20, 25]), K = 0.5 * m * v * v, F = K / s;
+  return { kind: '数値', title: '運動エネルギーと仕事（ブレーキ）',
+    text: `質量${m} kgの自動車が${vk} km/h（＝${V(v)} m/s）で走っている。急ブレーキをかけたところ，${V(s)} mすべって停止した。この間，タイヤと路面との間の動摩擦力は一定とする。`,
+    subs: [
+      numSub('ブレーキをかける前の自動車の運動エネルギーはいくらか。', K, 'J', [m * v * v, 0.5 * m * v, 0.5 * m * vk * vk], R`\(K=\frac12mv^2=\frac12\times${m}\times${V(v)}^2=${fmt(K)}\ \mathrm{J}\)。`),
+      numSub('動摩擦力の大きさはいくらか。', F, 'N', [2 * F, K * s, m * v / s],
+        R`運動エネルギーの変化＝動摩擦力がした仕事。\(0-${fmt(K)}=-F\times${V(s)}\) より \(F=${fmt(F)}\ \mathrm{N}\)。`),
+      numSub(`同じ自動車が${vk * 2} km/hで走ってきて同じように急ブレーキをかけると，停止するまでにすべる距離はいくらか。`, 4 * s, 'm', [2 * s, s, 8 * s],
+        R`速さが2倍だと運動エネルギーは4倍。動摩擦力は同じなので距離も4倍：\(${fmt(4 * s)}\ \mathrm{m}\)。`)
+    ] };
+}
+function u3n_stop() {
+  let mu, a, s;
+  do { mu = pick([0.20, 0.25, 0.40, 0.50]); a = pick([4, 8, 10, 12, 20]); s = a * a / (40 * mu); } while (Math.abs(Number(fmt(s)) - s) > 1e-9 || s > 60);
+  const v0 = 0.7 * a, m = pick([2.0, 5.0]), f = mu * m * g;
+  return { kind: '数値', title: '動摩擦力による停止',
+    text: `動摩擦係数が${V(mu)}の水平な台の上で，質量${V(m)} kgの物体に${V(v0)} m/sの初速度を与えた。重力加速度の大きさを9.8 m/s²とし，エネルギーの考えを用いて答えよ。`,
+    subs: [
+      numSub('物体が受ける動摩擦力の大きさはいくらか。', f, 'N', [m * g, mu * m, f * 2], R`\(f=\mu' mg=${V(mu)}\times${V(m)}\times9.8=${fmt(f)}\ \mathrm{N}\)。`),
+      numSub('物体が静止するまでに移動する距離はいくらか。', s, 'm', [2 * s, s / 2, v0 / (2 * mu * g)],
+        R`\(0-\frac12mv_0^2=-\mu' mg\times s\) より \(s=\frac{v_0^2}{2\mu' g}=\frac{${V(v0)}^2}{2\times${V(mu)}\times9.8}=${fmt(s)}\ \mathrm{m}\)。質量は約分されて消える。`)
+    ] };
+}
+function u3n_accel() {
+  let m, v0, v, s, F;
+  do {
+    m = pick([1.0, 2.0, 4.0]); v0 = pick([1.0, 2.0, 3.0]); v = pick([4.0, 5.0, 6.0]); s = pick([2.0, 3.0, 4.0, 5.0, 6.0]);
+    F = 0.5 * m * (v * v - v0 * v0) / s;
+  } while (Math.abs(Number(fmt(F)) - F) > 1e-9);
+  const W = F * s;
+  return { kind: '数値', title: '仕事と運動エネルギーの変化',
+    text: `なめらかな水平面上を速さ${V(v0)} m/sで運動している質量${V(m)} kgの物体に，運動の向きに大きさ${V(F)} Nの一定の力を加え続け，${V(s)} m移動させた。`,
+    subs: [
+      numSub('力が物体にした仕事はいくらか。', W, 'J', [F / s, W / 2, 0.5 * m * v0 * v0], R`\(W=Fs=${V(F)}\times${V(s)}=${fmt(W)}\ \mathrm{J}\)。`),
+      numSub('はじめの運動エネルギーはいくらか。', 0.5 * m * v0 * v0, 'J', [m * v0 * v0, 0.5 * m * v0, 0.5 * m * v0 * v0 + W], R`\(K_0=\frac12\times${V(m)}\times${V(v0)}^2=${fmt(0.5 * m * v0 * v0)}\ \mathrm{J}\)。`),
+      numSub('移動したあとの物体の速さはいくらか。', v, 'm/s', [Math.sqrt(2 * W / m), Math.sqrt(v0 * v0 + W / m), v0 + Math.sqrt(2 * W / m)],
+        R`\(\frac12mv^2-\frac12mv_0^2=W\)：\(\frac12\times${V(m)}\times v^2=${fmt(0.5 * m * v0 * v0)}+${fmt(W)}\) より \(v=${fmt(v)}\ \mathrm{m/s}\)。`)
+    ] };
+}
+function u3n_levels() {
+  const m = pick([2.0, 5.0, 10]), a = pick([3.0, 4.0, 5.0]), b = pick([2.0, 5.0, 6.0]);
+  const zero = [N(m * g * a, 'J'), N(-m * g * b, 'J'), N(m * g * (a + b), 'J')];
+  return { kind: '数値', title: '位置エネルギーの基準', fig: figLevels(),
+    text: `図のように，川の水面から a＝${V(a)} m 上に道路があり，道路から b＝${V(b)} m 上に庭がある。道路の上に置かれた質量${V(m)} kgの物体の重力による位置エネルギーを，次の面を基準として求めよ。重力加速度の大きさを9.8 m/s²とする。`,
+    subs: [
+      numSub('川の水面を基準としたとき', m * g * a, 'J', [-m * g * a, m * a, m * g * (a + b)], R`\(U=mgh=${V(m)}\times9.8\times${V(a)}=${fmt(m * g * a)}\ \mathrm{J}\)。`),
+      mk('道路を基準としたとき', N(0, 'J'), zero, '物体は基準面上にあるので \\(h=0\\)，\\(U=0\\)。'),
+      numSub('庭を基準としたとき', -m * g * b, 'J', [m * g * b, -m * g * (a + b), -m * b], R`物体は基準より ${V(b)} m 低いので \(h=-${V(b)}\ \mathrm{m}\)。\(U=${V(m)}\times9.8\times(-${V(b)})=${fmt(-m * g * b)}\ \mathrm{J}\)。`)
+    ] };
+}
+function u3n_spring() {
+  const k = pick([10, 20, 50, 100]), x1 = pick([5.0, 10, 20]), add = pick([5.0, 10, 20]), x2 = x1 + add;
+  const X1 = x1 / 100, X2 = x2 / 100, U1 = 0.5 * k * X1 * X1, U2 = 0.5 * k * X2 * X2;
+  return { kind: '数値', title: '仕事と弾性エネルギー',
+    text: `ばね定数${V(k)} N/mのばねを，自然の長さから${V(x1)} cm伸ばした。`,
+    subs: [
+      numSub('ばねがたくわえている弾性エネルギーはいくらか。', U1, 'J', [k * X1 * X1, 0.5 * k * X1, 0.5 * k * x1 * x1], R`\(U=\frac12kx^2=\frac12\times${V(k)}\times${fmt(X1)}^2=${fmt(U1)}\ \mathrm{J}\)。cmをmに直す。`),
+      numSub(`この状態から，ばねをさらに${V(add)} cm伸ばすのに必要な仕事はいくらか。`, U2 - U1, 'J', [0.5 * k * (X2 - X1) ** 2, U2, k * X1 * (X2 - X1)],
+        R`弾性エネルギーの差に等しい。伸びは全体で ${fmt(X2)} m なので \(\frac12\times${V(k)}\times${fmt(X2)}^2-${fmt(U1)}=${fmt(U2)}-${fmt(U1)}=${fmt(U2 - U1)}\ \mathrm{J}\)。`)
+    ] };
+}
+function u3s_stop() {
+  return { kind: '文字', title: '動摩擦力による停止（文字）',
+    text: R`動摩擦係数 \(\mu'\) の粗い水平面上で，質量 \(m\) の物体に初速度 \(v_0\) を与えたところ，ある距離 \(s\) だけすべって静止した。重力加速度の大きさを \(g\) とする。`,
+    subs: [
+      symSub('この間に動摩擦力が物体にした仕事を \\(m,\\ v_0\\) で表すとどうなるか。', R`-\dfrac12mv_0^2`, [R`\dfrac12mv_0^2`, R`-mv_0^2`, R`-\dfrac12mv_0`], R`運動エネルギーの変化＝された仕事：\(0-\frac12mv_0^2\)。`),
+      symSub('距離 \\(s\\) はいくらか。', R`\dfrac{v_0^2}{2\mu' g}`, [R`\dfrac{v_0^2}{\mu' g}`, R`\dfrac{v_0}{2\mu' g}`, R`\dfrac{\mu' v_0^2}{2g}`], R`\(-\frac12mv_0^2=-\mu' mg\,s\) より \(s=\frac{v_0^2}{2\mu' g}\)。`),
+      symSub('初速度を2倍にすると，すべる距離は何倍になるか。', R`4\ \text{倍}`, [R`2\ \text{倍}`, R`\sqrt2\ \text{倍}`, R`8\ \text{倍}`], R`\(s\propto v_0^2\) なので4倍。`)
+    ] };
+}
+function u3s_force() {
+  return { kind: '文字', title: '仕事と運動エネルギー（文字）',
+    text: R`静止している質量 \(m\) の物体に，水平方向に一定の大きさ \(F\) の力を加え続け，水平面上を距離 \(x\) だけ動かした。重力加速度の大きさを \(g\) とする。`,
+    subs: [
+      symSub('面がなめらかなとき，移動後の物体の運動エネルギーはいくらか。', R`Fx`, [R`\dfrac12Fx`, R`2Fx`, R`\dfrac{F}{x}`], R`された仕事 \(Fx\) だけ運動エネルギーが増える。`),
+      symSub('面がなめらかなとき，移動後の物体の速さはいくらか。', R`\sqrt{\dfrac{2Fx}{m}}`, [R`\sqrt{\dfrac{Fx}{m}}`, R`\dfrac{2Fx}{m}`, R`\sqrt{2Fxm}`], R`\(\frac12mv^2=Fx\) より \(v=\sqrt{\frac{2Fx}{m}}\)。`),
+      symSub('面と物体との間の動摩擦係数が \\(\\mu\'\\) のとき，移動後の物体の速さはいくらか。', R`\sqrt{\dfrac{2(F-\mu' mg)x}{m}}`, [R`\sqrt{\dfrac{2(F+\mu' mg)x}{m}}`, R`\sqrt{\dfrac{2(F-\mu' m)x}{m}}`, R`\sqrt{\dfrac{(F-\mu' mg)x}{m}}`],
+        R`\(\frac12mv^2=Fx-\mu' mgx\)。`)
+    ] };
+}
+function u3s_spring() {
+  return { kind: '文字', title: '弾性エネルギーと仕事（文字）',
+    text: R`ばね定数 \(k\) のばねを，自然の長さからゆっくり伸ばす。`,
+    subs: [
+      symSub('伸びが \\(x\\) のとき，ばねの弾性エネルギーはいくらか。', R`\dfrac12kx^2`, [R`kx^2`, R`\dfrac12kx`, R`kx`], R`\(U=\frac12kx^2\)。`),
+      symSub('伸びを \\(x\\) から \\(2x\\) にするのに必要な仕事はいくらか。', R`\dfrac32kx^2`, [R`\dfrac12kx^2`, R`2kx^2`, R`kx^2`], R`\(\frac12k(2x)^2-\frac12kx^2=\frac32kx^2\)。伸びの差 \(x\) で \(\frac12kx^2\) としないこと。`),
+      symSub('伸びが \\(x\\) のときに手をはなし，ばねの先の質量 \\(m\\) の物体がなめらかな水平面上で自然の長さを通過するときの速さはいくらか。', R`x\sqrt{\dfrac{k}{m}}`, [R`x\sqrt{\dfrac{m}{k}}`, R`\dfrac{kx}{m}`, R`x\sqrt{\dfrac{2k}{m}}`], R`弾性力がした仕事 \(\frac12kx^2\) が運動エネルギーになる。\(\frac12mv^2=\frac12kx^2\)。`)
+    ] };
+}
+
+// ==== ④ 力学的エネルギー保存則 ====
+function u4n_loop() {
+  let a, b, d;
+  do { a = pick([10, 14, 20]); b = pick([2, 4, 6, 8, 10, 12, 14, 16]); d = (a * a - b * b) / 40; }
+  while (b >= a || d < 1 || d > 10 || Math.abs(Number(fmt(d)) - d) > 1e-9 || 0.49 * b * b < g * d / 2);
+  const vA = 0.7 * a, vB = 0.7 * b, hC = a * a / 40;
+  return { kind: '数値', title: 'ジェットコースター', fig: figLoop(),
+    text: `図のように，台車が速さ${V(vA)} m/sで点Aから出発し，鉛直面内にある直径 d＝${V(d)} mの円形のレールを一周し，斜面をのぼる。面はすべてなめらかで，重力加速度の大きさを9.8 m/s²とする。`,
+    subs: [
+      numSub('円形のレールの最高点Bにおける台車の速さはいくらか。', vB, 'm/s', [Math.sqrt(vA * vA - g * d), Math.sqrt(vA * vA - 4 * g * d) || vA / 2, vA - Math.sqrt(2 * g * d)],
+        R`\(\frac12m\cdot${V(vA)}^2=\frac12mv^2+m\times9.8\times${V(d)}\) より \(v^2=${fmt(vB * vB)}\)，\(v=${fmt(vB)}\ \mathrm{m/s}\)。最高点の高さは直径に等しい。`),
+      numSub('台車が斜面上の最高点Cに達したときの，水平面からの高さはいくらか。', hC, 'm', [vA * vA / g, hC - d, hC / 2],
+        R`点Cで速さ0。\(\frac12m\cdot${V(vA)}^2=m\times9.8\times h\) より \(h=${fmt(hC)}\ \mathrm{m}\)。`)
+    ] };
+}
+function u4n_pendulum() {
+  const a = pick([2, 3]), b = pick(a === 2 ? [1] : [1, 2]), L = 0.2 * a * a, h = L / 2, hp = 0.1 * (a * a - b * b);
+  const v1 = 1.4 * a, v2 = 1.4 * b;
+  return { kind: '数値', title: '振り子のエネルギー', fig: figPendulum('60°'),
+    text: `長さ${V(L)} mの糸の先におもりをつけ，点Oからつるして振り子をつくった。糸がたるまないように，鉛直方向とのなす角が60°となる位置まで引き上げ，おもりを静かにはなす。重力加速度の大きさを9.8 m/s²とする。`,
+    subs: [
+      numSub('おもりをはなした位置は，最下点から何mの高さか。', h, 'm', [L * S3 / 2, L, L - L * S3 / 2], R`\(L-L\cos60^\circ=${V(L)}-${V(L)}\times\frac12=${fmt(h)}\ \mathrm{m}\)。`),
+      numSub('おもりが最下点に達したときの速さはいくらか。', v1, 'm/s', [Math.sqrt(2 * g * L), Math.sqrt(g * h), 2 * g * h],
+        R`糸の張力は仕事をしない。\(mg\times${fmt(h)}=\frac12mv^2\) より \(v=\sqrt{2\times9.8\times${fmt(h)}}=${fmt(v1)}\ \mathrm{m/s}\)。`),
+      numSub(`おもりが最下点から${V(hp)} mの高さを通過するときの速さはいくらか。`, v2, 'm/s', [Math.sqrt(2 * g * hp), v1 - v2 > 0 ? (v1 + v2) / 2 : v1 * 0.8, Math.sqrt(g * (h - hp))],
+        R`\(mg\times${fmt(h)}=\frac12mv^2+mg\times${V(hp)}\) より \(v=\sqrt{2\times9.8\times(${fmt(h)}-${V(hp)})}=${fmt(v2)}\ \mathrm{m/s}\)。`)
+    ] };
+}
+function u4n_atwood() {
+  const T = pick([[2.7, 2.2, 2.0], [2.7, 2.2, 0.5], [5.4, 4.4, 2.0], [5.4, 4.4, 4.5], [5.9, 3.9, 1.0], [2.95, 1.95, 0.5]]);
+  const [mA, mB, d] = T, dm = mA - mB, U = -dm * g * d, v = Math.sqrt(2 * dm * g * d / (mA + mB));
+  return { kind: '数値', title: '滑車と力学的エネルギー', fig: figAtwood(),
+    text: `図のように，なめらかに回転する軽い定滑車にかけた糸の両端に，質量${V(mA)} kgの物体Aと質量${V(mB)} kgの物体Bを結ぶ。A，Bを同じ高さで支え，静かに支えをはなすと，Aは下向きに，Bは上向きに運動を始めた。はじめの位置を重力による位置エネルギーの基準とし，${V(d)} m移動したときについて答えよ。重力加速度の大きさを9.8 m/s²とする。`,
+    subs: [
+      numSub('A，Bの重力による位置エネルギーの和はいくらか。', U, 'J', [-U, -(mA + mB) * g * d, -dm * d],
+        R`\(U_A=${V(mA)}\times9.8\times(-${V(d)})\)，\(U_B=${V(mB)}\times9.8\times${V(d)}\)。和は \(${fmt(U)}\ \mathrm{J}\)。`),
+      numSub('A，Bの速さはいくらか。', v, 'm/s', [Math.sqrt(2 * g * d), Math.sqrt(2 * dm * g * d / mA), Math.sqrt(dm * g * d / (mA + mB))],
+        R`糸の張力の仕事はAとBで打ち消しあうので，A，B全体の力学的エネルギーは保存。\(\frac12(${V(mA)}+${V(mB)})v^2+(${fmt(U)})=0\) より \(v=${fmt(v)}\ \mathrm{m/s}\)。`)
+    ] };
+}
+function u4n_spring() {
+  const [m, k] = pick([[0.50, 50], [1.0, 100], [2.0, 50], [0.40, 10]]), r = Math.sqrt(m / k), c = pick([0.2, 0.4, 1.0]);
+  const v0 = 5 * c, x1 = 3 * c * r, v = 4 * c, xm = 5 * c * r;
+  return { kind: '数値', title: 'ばねの縮みと力学的エネルギー', fig: figSpringH(),
+    text: `なめらかな水平面上に，ばね定数${V(k)} N/mのばねが置かれ，一端が壁に固定されている。質量${V(m)} kgの物体が速さ${V(v0)} m/sでばねの他端に衝突した。`,
+    subs: [
+      numSub(`ばねが${V(x1)} m縮んだときの，ばねの弾性エネルギーはいくらか。`, 0.5 * k * x1 * x1, 'J', [k * x1 * x1, 0.5 * k * x1, 0.5 * m * v0 * v0], R`\(U=\frac12\times${V(k)}\times${V(x1)}^2=${fmt(0.5 * k * x1 * x1)}\ \mathrm{J}\)。`),
+      numSub('このときの物体の速さはいくらか。', v, 'm/s', [v0 - 3 * c, Math.sqrt(v0 * v0 + 9 * c * c), v0 / 2],
+        R`\(\frac12\times${V(m)}\times${V(v0)}^2=\frac12\times${V(m)}\times v^2+${fmt(0.5 * k * x1 * x1)}\) より \(v=${fmt(v)}\ \mathrm{m/s}\)。`),
+      numSub('ばねの縮みの最大値はいくらか。', xm, 'm', [v0 * Math.sqrt(k / m), v0 * m / k, xm / Math.SQRT2],
+        R`最も縮んだとき速さ0。\(\frac12mv_0^2=\frac12kx^2\) より \(x=v_0\sqrt{\frac{m}{k}}=${V(v0)}\times${fmt(r)}=${fmt(xm)}\ \mathrm{m}\)。`)
+    ] };
+}
+function u4n_throw() {
+  const [a, c] = pick([[3, 5], [6, 10], [12, 20], [5, 13], [8, 10]]), v0 = 0.7 * a, v = 0.7 * c, H = (c * c - a * a) / 40, m = pick([0.50, 1.0, 2.0]);
+  const E = 0.5 * m * v0 * v0 + m * g * H;
+  return { kind: '数値', title: '投げ出した物体の力学的エネルギー', fig: figThrow(),
+    text: `地面から高さ${V(H)} mのがけの上から，質量${V(m)} kgの小球を水平方向に速さ${V(v0)} m/sで投げ出した。地面を重力による位置エネルギーの基準とし，重力加速度の大きさを9.8 m/s²とする。空気抵抗は無視する。`,
+    subs: [
+      numSub('投げ出した直後の小球の力学的エネルギーはいくらか。', E, 'J', [0.5 * m * v0 * v0, m * g * H, m * v0 * v0 + m * g * H], R`\(E=\frac12mv_0^2+mgH=${fmt(0.5 * m * v0 * v0)}+${fmt(m * g * H)}=${fmt(E)}\ \mathrm{J}\)。`),
+      numSub('地面に達する直前の小球の速さはいくらか。', v, 'm/s', [Math.sqrt(2 * g * H), v0 + Math.sqrt(2 * g * H), Math.sqrt(v0 * v0 + g * H)],
+        R`\(\frac12mv^2=E\) より \(v^2=v_0^2+2gH=${fmt(v0 * v0)}+${fmt(2 * g * H)}\)，\(v=${fmt(v)}\ \mathrm{m/s}\)。`),
+      mk('同じ速さで投げる向きを斜め上向きに変えると，地面に達する直前の速さはどうなるか。', '変わらない', ['速くなる', '遅くなる', '投げる角度によって速くも遅くもなる'],
+        '力学的エネルギーは投げる向きによらず同じなので，地面での速さも同じ。')
+    ] };
+}
+function u4s_horiz() {
+  return { kind: '文字', title: '水平投射と力学的エネルギー', fig: figThrow(),
+    text: R`地面から高さ \(H\) の位置で，質量 \(m\) の物体を水平方向に速さ \(v_0\) で投げ出した。地面を重力による位置エネルギーの基準とし，重力加速度の大きさを \(g\) とする。`,
+    subs: [
+      symSub('投げ出した直後の物体の力学的エネルギーはいくらか。', R`\dfrac12mv_0^2+mgH`, [R`\dfrac12mv_0^2`, R`mgH`, R`\dfrac12mv_0^2-mgH`], R`\(E=K+U=\frac12mv_0^2+mgH\)。`),
+      symSub('地面から高さ \\(h\\) の位置を通過するときの物体の速さはいくらか。', R`\sqrt{v_0^2+2g(H-h)}`, [R`\sqrt{v_0^2+2gh}`, R`\sqrt{v_0^2-2g(H-h)}`, R`v_0+\sqrt{2g(H-h)}`],
+        R`\(\frac12mv_0^2+mgH=\frac12mv^2+mgh\)。`),
+      symSub('地面に達する直前の物体の速さはいくらか。', R`\sqrt{v_0^2+2gH}`, [R`\sqrt{2gH}`, R`v_0+\sqrt{2gH}`, R`\sqrt{v_0^2+gH}`], R`\(\frac12mv_0^2+mgH=\frac12mv'^2\)。`)
+    ] };
+}
+function u4s_spring() {
+  return { kind: '文字', title: 'ばねの縮み（文字）', fig: figSpringH(),
+    text: R`なめらかな水平面上に，ばね定数 \(k\) のばねが置かれ，一端が固定されている。質量 \(m\) の物体が速さ \(v_0\) でばねの他端に衝突した。`,
+    subs: [
+      symSub('ばねが \\(x\\) だけ縮んでいるときの，ばねの弾性エネルギーはいくらか。', R`\dfrac12kx^2`, [R`kx^2`, R`\dfrac12kx`, R`kx`], R`\(U=\frac12kx^2\)。`),
+      symSub('このときの物体の速さはいくらか。', R`\sqrt{v_0^2-\dfrac{k}{m}x^2}`, [R`\sqrt{v_0^2+\dfrac{k}{m}x^2}`, R`\sqrt{v_0^2-\dfrac{m}{k}x^2}`, R`v_0-x\sqrt{\dfrac{k}{m}}`],
+        R`\(\frac12mv_0^2=\frac12mv^2+\frac12kx^2\)。`),
+      symSub('ばねの縮みの最大値はいくらか。', R`v_0\sqrt{\dfrac{m}{k}}`, [R`v_0\sqrt{\dfrac{k}{m}}`, R`\dfrac{mv_0}{k}`, R`v_0\sqrt{\dfrac{2m}{k}}`], R`速さ0のとき：\(\frac12mv_0^2=\frac12kx_0^2\)。`)
+    ] };
+}
+function u4s_curve() {
+  return { kind: '文字', title: '斜方投射と力学的エネルギー', fig: figCurve(),
+    text: R`図のような，なめらかな曲面がある。地面からの高さ \(h_1\) の点Aから初速度0ですべり出した質量 \(m\) の小球が，高さ \(h_2\) の点Bから上向きに45°の角度で飛び出した。重力加速度の大きさを \(g\) とする。`,
+    subs: [
+      symSub('小球が点Bから飛び出す速さはいくらか。', R`\sqrt{2g(h_1-h_2)}`, [R`\sqrt{2gh_1}`, R`\sqrt{g(h_1-h_2)}`, R`\sqrt{2g(h_1+h_2)}`], R`\(mgh_1=\frac12mv^2+mgh_2\)。`),
+      symSub('最高点を飛んでいるときの，小球の運動エネルギーはいくらか。', R`\dfrac12mg(h_1-h_2)`, ['0', R`mg(h_1-h_2)`, R`\dfrac14mg(h_1-h_2)`],
+        R`最高点では速度の水平成分 \(v\cos45^\circ\) だけが残る。\(\frac12m(v\cos45^\circ)^2=\frac12m\cdot\frac{v^2}{2}=\frac12mg(h_1-h_2)\)。`),
+      symSub('小球が達する最高点の，地面からの高さはいくらか。', R`\dfrac{h_1+h_2}{2}`, [R`h_1`, R`\dfrac{h_1-h_2}{2}`, R`\dfrac{h_1+3h_2}{4}`],
+        R`\(mgh_1=\frac12mg(h_1-h_2)+mgH\) より \(H=\frac{h_1+h_2}{2}\)。最高点でも運動エネルギーは0にならないので \(h_1\) には届かない。`)
+    ] };
+}
+function u4s_vspring() {
+  return { kind: '文字', title: '鉛直ばねと力学的エネルギー', fig: figSpringV(),
+    text: R`ばね定数 \(k\) のばねの上端を天井に固定し，下端に質量 \(m\) の物体をつける。ばねが自然の長さのとき板で物体を支えておき，板を急に取り去った。自然の長さの位置を原点として鉛直下向きに \(x\) 軸をとり，重力加速度の大きさを \(g\) とする。`,
+    subs: [
+      symSub('ばねの伸びが最大となるときの物体の位置 \\(x\\) はいくらか。', R`\dfrac{2mg}{k}`, [R`\dfrac{mg}{k}`, R`\dfrac{mg}{2k}`, R`\dfrac{4mg}{k}`],
+        R`速さ0どうしで保存則：\(0=-mgx+\frac12kx^2\) より \(x=\frac{2mg}{k}\)。`),
+      symSub('物体の速さが最大となるときの位置 \\(x\\) はいくらか。', R`\dfrac{mg}{k}`, [R`\dfrac{2mg}{k}`, R`\dfrac{mg}{2k}`, '0'],
+        R`\(\frac12mv^2=mgx-\frac12kx^2\) が最大になるのは \(x=\frac{mg}{k}\)（つりあいの位置）。`),
+      symSub('そのときの速さはいくらか。', R`g\sqrt{\dfrac{m}{k}}`, [R`g\sqrt{\dfrac{k}{m}}`, R`2g\sqrt{\dfrac{m}{k}}`, R`g\sqrt{\dfrac{2m}{k}}`],
+        R`\(\frac12mv^2=mg\cdot\frac{mg}{k}-\frac12k\left(\frac{mg}{k}\right)^2=\frac{m^2g^2}{2k}\) より \(v=g\sqrt{\frac{m}{k}}\)。`)
+    ] };
+}
+function u4s_atwood() {
+  return { kind: '文字', title: '滑車でつながれた2物体', fig: figAtwood(),
+    text: R`なめらかに回転する軽い定滑車に糸をかけ，両端に質量 \(M\) の物体Aと質量 \(m\)（\(M>m\)）の物体Bを結ぶ。A，Bを同じ高さで支え，静かにはなした。重力加速度の大きさを \(g\) とする。A，Bがそれぞれ距離 \(h\) 動いたときについて答えよ。`,
+    subs: [
+      symSub('A，Bの重力による位置エネルギーの和の変化はいくらか。', R`-(M-m)gh`, [R`(M-m)gh`, R`-(M+m)gh`, '0'], R`Aは \(-Mgh\)，Bは \(+mgh\)。和は \(-(M-m)gh\)。`),
+      symSub('A，Bの速さはいくらか。', R`\sqrt{\dfrac{2(M-m)gh}{M+m}}`, [R`\sqrt{2gh}`, R`\sqrt{\dfrac{2(M-m)gh}{M}}`, R`\sqrt{\dfrac{(M-m)gh}{M+m}}`],
+        R`張力の仕事は打ち消しあう。\(\frac12(M+m)v^2-(M-m)gh=0\)。`)
+    ] };
+}
+
+// ==== ⑤ 非保存力のする仕事と力学的エネルギーの変化 ====
+function u5n_slide() {
+  let mu, a, s;
+  do { mu = pick([0.20, 0.25, 0.40, 0.50]); a = pick([4, 8, 10, 12, 20]); s = a * a / (40 * mu); } while (Math.abs(Number(fmt(s)) - s) > 1e-9 || s > 60);
+  const v0 = 0.7 * a, m = pick([1.0, 2.0, 4.0]), dE = -0.5 * m * v0 * v0;
+  return { kind: '数値', title: '摩擦力と力学的エネルギー',
+    text: `粗い水平面上で，質量${V(m)} kgの物体を初速度${V(v0)} m/sですべらせると，物体はある距離をすべって静止した。物体と面との間の動摩擦係数を${V(mu)}，重力加速度の大きさを9.8 m/s²とする。`,
+    subs: [
+      numSub('この運動の前後で，物体の力学的エネルギーの変化はいくらか。', dE, 'J', [-dE, 2 * dE, -0.5 * m * v0], R`位置エネルギーは変わらないので運動エネルギーの変化を考える。\(0-\frac12\times${V(m)}\times${V(v0)}^2=${fmt(dE)}\ \mathrm{J}\)。（変化後）−（変化前）。`),
+      numSub('物体がすべった距離はいくらか。', s, 'm', [2 * s, s / 2, s * g / 10],
+        R`力学的エネルギーの変化＝動摩擦力がした仕事。\(${fmt(dE)}=-${V(mu)}\times${V(m)}\times9.8\times s\) より \(s=${fmt(s)}\ \mathrm{m}\)。`)
+    ] };
+}
+function u5n_slope() {
+  const m = pick([1.0, 2.0]), v0 = pick([7.0, 10]), L = pick(v0 === 10 ? [4.0, 5.0, 6.0, 8.0] : [2.0, 3.0, 4.0]);
+  const E0 = 0.5 * m * v0 * v0, E1 = m * g * L / 2, dE = E1 - E0, f = -dE / L;
+  return { kind: '数値', title: '摩擦のある斜面上での運動', fig: figIncline('30°', 'v₀'),
+    text: `水平とのなす角が30°の粗い斜面上に質量${V(m)} kgの物体を置き，斜面に沿って上向きに初速度${V(v0)} m/sで打ち出した。物体は斜面に沿って${V(L)} mすべって静止した。打ち出した位置を重力による位置エネルギーの基準とし，重力加速度の大きさを9.8 m/s²とする。`,
+    subs: [
+      numSub('静止したときの物体の重力による位置エネルギーはいくらか。', E1, 'J', [m * g * L, m * g * L * S3 / 2, E0], R`高さは \(${V(L)}\sin30^\circ=${fmt(L / 2)}\ \mathrm{m}\)。\(mgh=${V(m)}\times9.8\times${fmt(L / 2)}=${fmt(E1)}\ \mathrm{J}\)。`),
+      numSub('この運動の前後で，物体の力学的エネルギーの変化はいくらか。', dE, 'J', [-dE, -E0, E1 - 2 * E0],
+        R`はじめは運動エネルギーのみ \(\frac12\times${V(m)}\times${V(v0)}^2=${fmt(E0)}\ \mathrm{J}\)。変化は \(${fmt(E1)}-${fmt(E0)}=${fmt(dE)}\ \mathrm{J}\)。`),
+      numSub('物体にはたらいていた動摩擦力の大きさはいくらか。', f, 'N', [E0 / L, m * g / 2, (E0 + E1) / L],
+        R`力学的エネルギーの変化＝動摩擦力の仕事：\(${fmt(dE)}=-f\times${V(L)}\) より \(f=${fmt(f)}\ \mathrm{N}\)。`)
+    ] };
+}
+function u5n_roughslope() {
+  const m = pick([1.0, 2.0, 4.0]), h = pick([5.0, 10]), v = pick([4.9, 7.0, 9.8].filter(x => x * x / 2 < g * h - 1));
+  const W = 0.5 * m * v * v - m * g * h;
+  return { kind: '数値', title: '粗い斜面をすべりおりる',
+    text: `高さ${V(h)} mの粗い斜面の上端から，質量${V(m)} kgの物体を静かにすべらせたところ，下端に達したときの速さは${V(v)} m/sであった。下端を重力による位置エネルギーの基準とし，重力加速度の大きさを9.8 m/s²とする。`,
+    subs: [
+      numSub('上端での物体の力学的エネルギーはいくらか。', m * g * h, 'J', [m * h, 0.5 * m * v * v, m * g * h / 2], R`静止しているので位置エネルギーのみ：\(${V(m)}\times9.8\times${V(h)}=${fmt(m * g * h)}\ \mathrm{J}\)。`),
+      numSub('下端での物体の力学的エネルギーはいくらか。', 0.5 * m * v * v, 'J', [m * v * v, m * g * h, 0.5 * m * v], R`運動エネルギーのみ：\(\frac12\times${V(m)}\times${V(v)}^2=${fmt(0.5 * m * v * v)}\ \mathrm{J}\)。`),
+      numSub('この間に動摩擦力が物体にした仕事はいくらか。', W, 'J', [-W, -m * g * h, 0.5 * m * v * v],
+        R`（力学的エネルギーの変化）＝（非保存力の仕事）：\(${fmt(0.5 * m * v * v)}-${fmt(m * g * h)}=${fmt(W)}\ \mathrm{J}\)。垂直抗力は仕事をしない。`)
+    ] };
+}
+function u5n_air() {
+  const m = pick([0.20, 0.50, 1.0]), h = pick([10, 20, 40]), v = pick([7.0, 9.8, 14].filter(x => x * x / 2 < g * h * 0.8));
+  const W = 0.5 * m * v * v - m * g * h, f = -W / h;
+  return { kind: '数値', title: '空気抵抗と力学的エネルギー',
+    text: `質量${V(m)} kgの小球を，地面から高さ${V(h)} mの位置から静かに落としたところ，地面に達する直前の速さは${V(v)} m/sであった。地面を重力による位置エネルギーの基準とし，重力加速度の大きさを9.8 m/s²とする。`,
+    subs: [
+      numSub('落下する間に，空気抵抗が小球にした仕事はいくらか。', W, 'J', [-W, -m * g * h, 0.5 * m * v * v],
+        R`\(\frac12mv^2-mgh=${fmt(0.5 * m * v * v)}-${fmt(m * g * h)}=${fmt(W)}\ \mathrm{J}\)。空気抵抗は運動と逆向きなので負の仕事。`),
+      numSub('空気抵抗の大きさが一定であったとすると，その大きさはいくらか。', f, 'N', [-W * h, m * g, m * g - f], R`\(-f\times${V(h)}=${fmt(W)}\) より \(f=${fmt(f)}\ \mathrm{N}\)。`)
+    ] };
+}
+function u5n_strip() {
+  let h, mu, L, hp;
+  do { h = pick([1.0, 1.5, 2.0]); mu = pick([0.20, 0.25, 0.50]); L = pick([0.40, 0.80, 1.0, 2.0]); hp = h - mu * L; } while (hp <= 0.15 || Math.abs(Number(fmt(hp)) - hp) > 1e-9);
+  const m = pick([0.50, 1.0, 2.0]), W = -mu * m * g * L;
+  return { kind: '数値', title: '粗い区間を通過する運動', fig: figStrip(),
+    text: `図のような曲面があり，水平部分の長さ${V(L)} mの区間だけが粗く，他はなめらかである。高さ${V(h)} mの位置から質量${V(m)} kgの小球を静かにはなした。粗い区間と小球との間の動摩擦係数を${V(mu)}，重力加速度の大きさを9.8 m/s²とする。`,
+    subs: [
+      numSub('粗い区間を1回通過する間に，動摩擦力が小球にした仕事はいくらか。', W, 'J', [-W, -m * g * L, -mu * m * L], R`\(-\mu' mgL=-${V(mu)}\times${V(m)}\times9.8\times${V(L)}=${fmt(W)}\ \mathrm{J}\)。`),
+      numSub('粗い区間を通過したあと，小球は反対側の曲面を何mの高さまでのぼるか。', hp, 'm', [h, mu * L, h - mu * g * L > 0 ? h - mu * g * L : h / 2],
+        R`\(mgh'-mgh=-\mu' mgL\) より \(h'=h-\mu' L=${V(h)}-${V(mu)}\times${V(L)}=${fmt(hp)}\ \mathrm{m}\)。`)
+    ] };
+}
+function u5s_slide() {
+  return { kind: '文字', title: '摩擦力と力学的エネルギー（文字）',
+    text: R`粗い水平面上で，質量 \(m\) の物体を初速度 \(v_0\) ですべらせると，物体はある距離をすべって静止した。物体と面との間の動摩擦係数を \(\mu'\)，重力加速度の大きさを \(g\) とする。`,
+    subs: [
+      symSub('この運動の前後で，物体の力学的エネルギーの変化はいくらか。', R`-\dfrac12mv_0^2`, [R`\dfrac12mv_0^2`, R`-mv_0^2`, '0'], R`（変化後）−（変化前）\(=0-\frac12mv_0^2\)。`),
+      symSub('物体がすべった距離はいくらか。', R`\dfrac{v_0^2}{2\mu' g}`, [R`\dfrac{v_0^2}{\mu' g}`, R`\dfrac{mv_0^2}{2\mu' g}`, R`\dfrac{v_0^2}{2g}`], R`\(-\frac12mv_0^2=-\mu' mg\,s\)。`)
+    ] };
+}
+function u5s_slope() {
+  return { kind: '文字', title: '粗い斜面をすべりおりる（文字）', fig: figIncline('θ'),
+    text: R`水平とのなす角 \(\theta\) の粗い斜面上で，高さ \(h\) の位置から質量 \(m\) の物体を静かにすべらせた。物体と斜面との間の動摩擦係数を \(\mu'\)，重力加速度の大きさを \(g\) とする。`,
+    subs: [
+      symSub('物体が受ける動摩擦力の大きさはいくらか。', R`\mu' mg\cos\theta`, [R`\mu' mg\sin\theta`, R`\mu' mg`, R`mg\sin\theta`], R`垂直抗力 \(N=mg\cos\theta\) なので \(\mu' N=\mu' mg\cos\theta\)。`),
+      symSub('斜面の下端に達するまでに動摩擦力がした仕事はいくらか。', R`-\dfrac{\mu' mgh}{\tan\theta}`, [R`-\mu' mgh\cos\theta`, R`-\dfrac{\mu' mgh}{\sin\theta}`, R`-\mu' mgh\tan\theta`],
+        R`すべる距離は \(\frac{h}{\sin\theta}\)。\(-\mu' mg\cos\theta\times\frac{h}{\sin\theta}=-\frac{\mu' mgh}{\tan\theta}\)。`),
+      symSub('下端での物体の速さはいくらか。', R`\sqrt{2gh\left(1-\dfrac{\mu'}{\tan\theta}\right)}`, [R`\sqrt{2gh}`, R`\sqrt{2gh\left(1+\dfrac{\mu'}{\tan\theta}\right)}`, R`\sqrt{2gh(1-\mu'\tan\theta)}`],
+        R`\(\frac12mv^2-mgh=-\frac{\mu' mgh}{\tan\theta}\)。`)
+    ] };
+}
+function u5s_pull() {
+  return { kind: '文字', title: '外力による力学的エネルギーの変化',
+    text: R`静止している質量 \(m\) の物体に，鉛直上向きに一定の大きさ \(F\)（\(F>mg\)）の力を加え続け，高さ \(h\) だけもち上げた。重力加速度の大きさを \(g\) とする。`,
+    subs: [
+      symSub('物体の力学的エネルギーの変化はいくらか。', R`Fh`, [R`(F-mg)h`, R`mgh`, R`(F+mg)h`], R`保存力（重力）以外の力 \(F\) がした仕事 \(Fh\) だけ力学的エネルギーが変化する。`),
+      symSub('高さ \\(h\\) での物体の速さはいくらか。', R`\sqrt{\dfrac{2(F-mg)h}{m}}`, [R`\sqrt{\dfrac{2Fh}{m}}`, R`\sqrt{2gh}`, R`\sqrt{\dfrac{(F-mg)h}{m}}`], R`\(\frac12mv^2+mgh=Fh\)。`)
+    ] };
+}
+function u5s_strip() {
+  return { kind: '文字', title: '粗い区間を通過する運動（文字）', fig: figStrip(),
+    text: R`図のような曲面があり，水平部分の長さ \(L\) の区間だけが粗く，他はなめらかである。高さ \(h\) の位置から質量 \(m\) の小球を静かにはなした。粗い区間での動摩擦係数を \(\mu'\)，重力加速度の大きさを \(g\) とする。`,
+    subs: [
+      symSub('粗い区間を1回通過する間の，小球の力学的エネルギーの変化はいくらか。', R`-\mu' mgL`, [R`\mu' mgL`, R`-mgL`, R`-\mu' mL`], R`動摩擦力の仕事 \(-\mu' mgL\) だけ変化する。`),
+      symSub('通過後，反対側の曲面をのぼる高さはいくらか。', R`h-\mu' L`, [R`h-\mu' gL`, R`h(1-\mu')`, R`h-\dfrac{L}{\mu'}`], R`\(mgh'-mgh=-\mu' mgL\) より \(h'=h-\mu' L\)。`)
+    ] };
+}
+
+const TABS = [
+  { no: '①', name: '仕事と仕事の原理', num: [u1n_angle, u1n_pulley, u1n_lift, u1n_friction, u1n_incline], sym: [u1s_friction, u1s_angle, u1s_incline, u1s_pulley] },
+  { no: '②', name: '仕事率', num: [u2n_friction, u2n_Fv, u2n_crane, u2n_car, u2n_time], sym: [u2s_incline, u2s_lift, u2s_friction] },
+  { no: '③', name: 'エネルギーの原理', num: [u3n_car, u3n_stop, u3n_accel, u3n_levels, u3n_spring], sym: [u3s_stop, u3s_force, u3s_spring] },
+  { no: '④', name: '力学的エネルギー保存則', num: [u4n_loop, u4n_pendulum, u4n_atwood, u4n_spring, u4n_throw], sym: [u4s_horiz, u4s_spring, u4s_curve, u4s_vspring, u4s_atwood] },
+  { no: '⑤', name: '非保存力の仕事と力学的エネルギーの変化', num: [u5n_slide, u5n_slope, u5n_roughslope, u5n_air, u5n_strip], sym: [u5s_slide, u5s_slope, u5s_pull, u5s_strip] }
+];
+// 1回3題：文字1〜2題＋残りを数値
+function genSet(ti) {
+  const t = TABS[ti], nSym = Math.random() < 0.5 ? 1 : 2;
+  const list = [...shuffle(t.sym).slice(0, nSym).map(f => f()), ...shuffle(t.num).slice(0, 3 - nSym).map(f => f())];
+  return shuffle(list);
+}
+// ==== UI ====
+// 記録の送信先（GASウェブアプリのURL）。決まったらここに貼り付ける
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbzoG9i-2jpMLtGKqk-h7JnGc2_L7jlMOeF-_nI98DRZ054XA7gDdEmLBQueyDbMfI5KuA/exec';
+const APP_ID = 'work_energy_calc';
+const CLASSES = ['3-C', '3-DE', '2-8', '2-9'];
+const MAX_MEMBERS = 3, MIN_GROUP = 2;
+const LS_KEY = 'work_energy_calc_student';
+
+const S = { student: null, editing: false, form: null, tab: 0, items: [], st: [], sent: false };
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const emptyMembers = () => Array.from({ length: MAX_MEMBERS }, () => ({ num: '', name: '' }));
+const filled = m => m.num !== '' && m.name !== '';
+const activeMembers = st => st.mode === 'solo' ? [st.members[0]] : st.members.filter(filled);
+const modeLabel = st => st.mode === 'solo' ? '個人' : 'PW/GW';
+
+function loadStudent() { try { const v = JSON.parse(localStorage.getItem(LS_KEY)); if (v && v.cls && v.members) S.student = v; } catch (e) { } }
+function saveStudent() { try { localStorage.setItem(LS_KEY, JSON.stringify(S.student)); } catch (e) { } }
+function typeset(el) {
+  if (window.renderMathInElement) renderMathInElement(el, { delimiters: [{ left: '\\(', right: '\\)', display: false }], throwOnError: false });
+}
+
+function renderHeader() {
+  const st = S.student;
+  $('who').textContent = st ? `${modeLabel(st) === '個人' ? '👤' : '👥'} ${st.cls}　${activeMembers(st).map(m => m.num + '番 ' + m.name).join('・')}　✎` : '生徒情報を入力';
+  $('tabs').innerHTML = TABS.map((t, i) => `<button class="tab ${i === S.tab ? 'on' : ''}" onclick="selectTab(${i})">${t.no} ${t.name}</button>`).join('');
+}
+function render() {
+  renderHeader();
+  if (!S.student || S.editing) return renderForm();
+  if (!S.items.length) return renderStart();
+  renderQuiz();
+}
+
+// ---- 生徒情報 ----
+function editStudent() {
+  const st = S.student;
+  S.form = st ? { mode: st.mode, clsSel: CLASSES.includes(st.cls) ? st.cls : 'other', other: CLASSES.includes(st.cls) ? '' : st.cls, members: st.members.map(m => ({ ...m })) }
+    : { mode: 'solo', clsSel: '', other: '', members: emptyMembers() };
+  S.editing = true; render();
+}
+function renderForm() {
+  if (!S.form) { editStudent(); return; }
+  const f = S.form, n = f.mode === 'solo' ? 1 : MAX_MEMBERS;
+  $('app').innerHTML = `<div class="card">
+    <h2 style="margin-top:0;font-size:19px">生徒情報</h2>
+    <div class="modes">
+      <button class="mode ${f.mode === 'solo' ? 'on' : ''}" onclick="setMode('solo')">👤 個人モード</button>
+      <button class="mode ${f.mode === 'group' ? 'on' : ''}" onclick="setMode('group')">👥 PW/GWモード</button>
+    </div>
+    <div class="row" style="margin-bottom:12px">
+      <label class="f">クラス<select id="cls" onchange="S.form.clsSel=this.value;renderForm()">
+        <option value="">選択</option>${CLASSES.map(c => `<option ${f.clsSel === c ? 'selected' : ''}>${c}</option>`).join('')}
+        <option value="other" ${f.clsSel === 'other' ? 'selected' : ''}>その他</option></select></label>
+      ${f.clsSel === 'other' ? `<label class="f">クラス名<input id="other" value="${esc(f.other)}" oninput="S.form.other=this.value" style="width:120px"></label>` : ''}
+    </div>
+    ${f.mode === 'group' ? `<div class="msg info" style="margin:0 0 10px">2人以上入力してください（3人目は空欄でもかまいません）。</div>` : ''}
+    ${Array.from({ length: n }, (_, i) => `<div class="mem"><span>${f.mode === 'group' ? (i + 1) + '人目' : ''}</span>
+      <input inputmode="numeric" placeholder="出席番号" value="${esc(f.members[i].num)}" oninput="S.form.members[${i}].num=this.value.trim()">
+      <input placeholder="氏名" value="${esc(f.members[i].name)}" oninput="S.form.members[${i}].name=this.value.trim()"></div>`).join('')}
+    <div class="row" style="margin-top:14px"><button class="btn pri" onclick="submitStudent()">保存</button>
+    ${S.student ? '<button class="btn sec" onclick="S.editing=false;S.form=null;render()">キャンセル</button>' : ''}</div>
+    <div id="fmsg"></div></div>`;
+}
+function setMode(m) { S.form.mode = m; renderForm(); }
+function alertBox(t) { $('fmsg').innerHTML = `<div class="msg ng">${esc(t)}</div>`; }
+function submitStudent() {
+  const f = S.form;
+  const cls = f.clsSel === 'other' ? f.other.trim() : f.clsSel;
+  if (!cls) { alertBox('クラスを選択してください。'); return; }
+  const n = f.mode === 'solo' ? 1 : MAX_MEMBERS, rows = f.members.slice(0, n);
+  const half = rows.findIndex(m => (m.num === '') !== (m.name === ''));
+  if (half >= 0) { alertBox(`${f.mode === 'solo' ? '' : (half + 1) + '人目の'}出席番号と氏名を両方入力してください。`); return; }
+  const ok = rows.filter(filled);
+  if (f.mode === 'solo' && ok.length < 1) { alertBox('出席番号と氏名を入力してください。'); return; }
+  if (f.mode === 'group' && ok.length < MIN_GROUP) { alertBox(`PW/GWモードでは${MIN_GROUP}名以上入力してください。`); return; }
+  const nums = ok.map(m => m.num);
+  if (new Set(nums).size !== nums.length) { alertBox('同じ出席番号が入力されています。'); return; }
+  const members = emptyMembers();
+  if (f.mode === 'group') ok.forEach((m, i) => members[i] = { ...m });
+  else f.members.forEach((m, i) => members[i] = { ...m });
+  S.student = { mode: f.mode, cls, members };
+  saveStudent(); S.editing = false; S.form = null; render();
+}
+
+// ---- 出題 ----
+function selectTab(i) {
+  if (S.items.length && !allDone() && S.st.some(x => x.tried.length) && !confirm('解答中の問題があります。単元を切り替えますか？（記録は送信されません）')) return;
+  S.tab = i; S.items = []; S.st = []; render();
+}
+function renderStart() {
+  const t = TABS[S.tab];
+  $('app').innerHTML = `<div class="card intro"><h2 style="margin-top:0;font-size:20px">${t.no} ${t.name}</h2>
+    <ul><li>1回に3題出題します（文字式の問題が1〜2題，残りは数値計算）。</li>
+    <li>各問の小問は4択です。正解するまで選び直せます。</li>
+    <li>はじめに選んだ答えが正解だった小問が得点になります。</li>
+    <li>すべての小問に正解すると，記録が送信されます。</li></ul>
+    <button class="btn pri" onclick="startQuiz()">学習を始める</button></div>`;
+}
+function startQuiz() {
+  S.items = genSet(S.tab); S.sent = false;
+  S.st = [];
+  S.items.forEach((p, pi) => p.subs.forEach((s, si) => S.st.push({ pi, si, tried: [], done: false, first: null })));
+  render(); window.scrollTo(0, 0);
+}
+const stOf = (pi, si) => S.st.find(x => x.pi === pi && x.si === si);
+const allDone = () => S.st.length > 0 && S.st.every(x => x.done);
+const subLabel = (pi, si, n) => `${pi + 1}` + (n > 1 ? `(${si + 1})` : '');
+function renderQuiz() {
+  const html = S.items.map((p, pi) => `<div class="card">
+    <div class="ph"><span class="pno">第${pi + 1}問</span><span class="badge ${p.kind}">${p.kind === '文字' ? '文字式' : '数値計算'}</span><span class="ptitle">${p.title}</span></div>
+    <div class="ptext">${p.text}</div>${p.fig || ''}
+    ${p.subs.map((s, si) => `<div class="sub" id="sub-${pi}-${si}">${subHTML(p, pi, si)}</div>`).join('')}</div>`).join('');
+  $('app').innerHTML = `<div class="progress" id="prog"></div>` + html + `<div id="result"></div>`;
+  updateProgress(); typeset($('app'));
+  if (allDone()) showResult();
+}
+function subHTML(p, pi, si) {
+  const s = p.subs[si], st = stOf(pi, si), n = p.subs.length;
+  const btns = s.ch.map((c, ci) => {
+    const cls = st.tried.includes(ci) ? (ci === s.a ? 'ok' : 'ng') : '';
+    const dis = st.done || st.tried.includes(ci) ? 'disabled' : '';
+    return `<button class="ch ${cls}" ${dis} onclick="answer(${pi},${si},${ci})"><b>${'アイウエ'[ci]}</b><span>${c}</span></button>`;
+  }).join('');
+  let fb = '';
+  if (st.done) fb = `<div class="fb"><span class="res ok">${st.first ? '◎ 正解！' : '○ 正解'}</span><div class="exp">${s.exp}</div></div>`;
+  else if (st.tried.length) fb = `<div class="fb"><span class="res ng">× ちがいます。</span> もう一度考えてみよう。</div>`;
+  return `<div class="sq">${n > 1 ? `(${si + 1}) ` : ''}${s.q}</div><div class="choices">${btns}</div>${fb}`;
+}
+function answer(pi, si, ci) {
+  const st = stOf(pi, si), s = S.items[pi].subs[si];
+  if (st.done || st.tried.includes(ci)) return;
+  st.tried.push(ci);
+  if (st.first === null) st.first = ci === s.a;
+  if (ci === s.a) st.done = true;
+  const el = $(`sub-${pi}-${si}`);
+  el.innerHTML = subHTML(S.items[pi], pi, si); typeset(el);
+  updateProgress();
+  if (allDone()) showResult();
+}
+function updateProgress() {
+  const d = S.st.filter(x => x.done).length;
+  $('prog').textContent = `正解した小問：${d} / ${S.st.length}`;
+}
+function showResult() {
+  const score = S.st.filter(x => x.first).length, N = S.st.length;
+  $('result').innerHTML = `<div class="card" style="text-align:center">
+    <div>はじめの解答で正解した小問</div><div class="score">${score} / ${N}</div>
+    <div id="status" class="msg info">記録を送信しています…</div>
+    <div class="row" style="justify-content:center;margin-top:14px"><button class="btn pri" onclick="startQuiz()">次の3題に挑戦</button>
+    <button class="btn sec" onclick="selectTab(S.tab)">単元のはじめにもどる</button></div></div>`;
+  $('result').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  if (!S.sent) { S.sent = true; sendRecord(score, N); } else setStatus('記録は送信済みです。', 'ok');
+}
+function setStatus(t, k = 'info') { const el = $('status'); if (el) { el.className = 'msg ' + k; el.textContent = t; } }
+
+async function sendRecord(score, N) {
+  if (!GAS_URL) { setStatus('送信先（GAS URL）が未設定のため，記録は送信されていません。', 'ng'); return; }
+  const t = TABS[S.tab], st = S.student, ms = activeMembers(st);
+  const groupStr = ms.map(m => `${m.num}番 ${m.name}`).join('・');
+  const qids = S.st.map(x => subLabel(x.pi, x.si, S.items[x.pi].subs.length));
+  const sendOne = async m => {
+    const params = new URLSearchParams({
+      app: APP_ID, section: `${t.no}${t.name}`, cls: st.cls, num: m.num, name: m.name,
+      mode: modeLabel(st), group: st.mode === 'group' ? groupStr : '',
+      score: String(score), total: String(N), qids: qids.join(','),
+      labels: S.items.map(p => `${p.kind}:${p.title}`).join('|')
+    });
+    S.st.forEach((x, i) => params.append('q' + qids[i], x.first ? '○' : '×'));
+    for (let k = 1; k <= 3; k++) {
+      try { await fetch(GAS_URL + '?' + params.toString(), { method: 'GET', mode: 'no-cors', cache: 'no-store' }); return true; }
+      catch (e) { if (k < 3) await new Promise(r => setTimeout(r, 1200 * k)); }
+    }
+    return false;
+  };
+  const failed = [];
+  for (let i = 0; i < ms.length; i++) {
+    setStatus(`記録を送信しています…${ms.length > 1 ? `（${i + 1}/${ms.length}人目）` : ''}`);
+    if (!(await sendOne(ms[i]))) failed.push(ms[i]);
+  }
+  if (failed.length) setStatus(`送信できませんでした（${failed.map(m => m.name).join('・')}）。通信状況を確認して先生に伝えてください。`, 'ng');
+  else setStatus(ms.length > 1 ? `${ms.length}人分の記録を送信しました。` : '記録を送信しました。', 'ok');
+}
+
+loadStudent();
+window.addEventListener('load', () => { render(); });
+</script>
+</body>
+</html>
