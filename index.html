@@ -144,10 +144,11 @@ function figIncline(lbl, arrow = '') {
     `<path d="M${x0 + 50},${y0} A50,50 0 0 0 ${(x0 + 50 * Math.cos(t)).toFixed(1)},${(y0 - 50 * Math.sin(t)).toFixed(1)}" stroke-width="1.5"/>` + tx(x0 + 66, y0 - 8, lbl) + a);
 }
 function figPulley() {
+  // 動滑車の両側のひもがどちらも鉛直になるよう，定滑車の左端を動滑車の右端（x=166）にそろえる
   return svg(185, `<line x1="60" y1="10" x2="280" y2="10" stroke-width="3"/>` +
-    `<line x1="220" y1="10" x2="220" y2="45"/><circle cx="220" cy="45" r="16"/>` +
+    `<line x1="182" y1="10" x2="182" y2="45"/><circle cx="182" cy="45" r="16"/>` +
     `<line x1="134" y1="10" x2="134" y2="115"/><circle cx="150" cy="115" r="16"/>` +
-    `<line x1="166" y1="115" x2="204" y2="45"/><line x1="236" y1="45" x2="236" y2="125"/>` + arr(236, 125, 236, 160, 3) + tx(262, 150, '引く') +
+    `<line x1="166" y1="115" x2="166" y2="45"/><line x1="198" y1="45" x2="198" y2="125"/>` + arr(198, 125, 198, 160, 3) + tx(212, 150, '引く', 'start') +
     `<line x1="150" y1="131" x2="150" y2="145"/><rect x="125" y="145" width="50" height="30"/>` + tx(150, 166, '物体'));
 }
 function figAtwood() {
